@@ -12,6 +12,11 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
+$router->group(['prefix' => '/token'], function () use ($router) {
+    $router->post('/', [
+        'uses' => 'TokenController@generate'
+    ]);
+});
 
 $router->post('{any:.*}', [
     'uses' => 'IndexController@index'

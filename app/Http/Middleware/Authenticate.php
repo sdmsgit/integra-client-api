@@ -6,6 +6,8 @@ use Closure;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Http\Request;
 use App\Http\Library\Helper as HelperLibrary;
+use App\Http\Library\ClientApiKey as ClientApiKeyLibrary;
+use Exception;
 
 class Authenticate
 {
@@ -60,15 +62,28 @@ class Authenticate
             return response()->json($this->responseData, $this->responseData["code"])->withHeaders($header);
         }
 
+        $apiKeyLibrary = new ClientApiKeyLibrary();
+        try {
+            $tokenData = $apiKeyLibrary->decodeToken($this->bearerToken);
 
-        app()->instance("ResponseData", $this->responseData);
+            $appIdData = $apiKeyLibrary->validateAppId($this->bearerToken, $tokenData->information->xtrsd);
 
-        app()->instance("RequestData", $this->data);
+            app()->instance("DatabaseInstance", $tokenData->information->xtrsd);
+            app()->instance("AppIdData", $appIdData);
 
-        app()->instance("IP", $this->ip);
-        app()->instance("BearerToken", $this->bearerToken);
-        app()->instance("ActionDate", $this->actionDate);
+            app()->instance("ResponseData", $this->responseData);
 
-        return $next($request);
+            app()->instance("RequestData", $this->data);
+
+            app()->instance("IP", $this->ip);
+            app()->instance("BearerToken", $this->bearerToken);
+            app()->instance("ActionDate", $this->actionDate);
+
+            return $next($request);
+        } catch (Exception $e) {
+            $this->responseData["messages"][] = HelperLibrary::getErrorUnauthorized();
+            $this->responseData["code"] = HelperLibrary::$responseCode["UNAUTHORIZED"];
+            return response()->json($this->responseData, $this->responseData["code"])->withHeaders($header);
+        }
     }
 }

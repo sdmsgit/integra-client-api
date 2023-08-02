@@ -9,11 +9,11 @@ class Controller extends BaseController
     protected $app;
     protected $ip = false;
     protected $responseData = false;
-    protected $bridgeData = false;
     protected $bearerToken = false;
     protected $actionDate = false;
     protected $requestData = false;
-    protected $force = false;
+    protected $databaseInstance = false;
+    protected $appIdData = false;
 
     /**
      * Create a new controller instance.
@@ -28,6 +28,9 @@ class Controller extends BaseController
         $this->responseData = $this->app->make('ResponseData');
         $this->bearerToken = $this->app->make('BearerToken');
         $this->actionDate = $this->app->make('ActionDate');
+
+        $this->databaseInstance = $this->app->make('DatabaseInstance');
+        $this->appIdData = $this->app->make('AppIdData');
     }
 
 

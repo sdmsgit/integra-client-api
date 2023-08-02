@@ -1,0 +1,15 @@
+[
+    'demo4jgi5_xhap6z69vc0xs962161zzbsfm45_mjc0b0iilg4ac384fi4ommk6tx7p78me' => [
+        'driver' => 'pgsql',
+        'host' => 'pgm-d9jay82641z478b0eo.pgsql.ap-southeast-5.rds.aliyuncs.com',
+        'port' => '5432',
+        'database' => 'demo4jgi5_xhap6z69vc0xs962161zzbsfm45_mjc0b0iilg4ac384fi4ommk6tx7p78me',
+        'username' => 'admin_mcd',
+        'password' => 'KerjaMulu123',
+        'charset' => 'utf8',
+        'prefix' => '',
+        'prefix_indexes' => true,
+        'schema' => 'public',
+        'sslmode' => 'prefer',
+    ],
+]
