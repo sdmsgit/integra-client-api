@@ -4,25 +4,31 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use Illuminate\Http\Request;
+use App\Http\Library\Helper as HelperLibrary;
 
 class Authenticate
 {
-    /**
-     * The authentication guard factory instance.
-     *
-     * @var \Illuminate\Contracts\Auth\Factory
-     */
-    protected $auth;
+    protected $path;
+    protected $ip;
+    protected $bearerToken;
+    protected $actionDate;
+    protected $data;
+    protected $bridgeData;
 
-    /**
-     * Create a new middleware instance.
-     *
-     * @param  \Illuminate\Contracts\Auth\Factory  $auth
-     * @return void
-     */
-    public function __construct(Auth $auth)
+    protected $responseData = array(
+        "data" => array(),
+        "messages" => array(),
+        "code" => 200
+    );
+
+    public function __construct(Request $request)
     {
-        $this->auth = $auth;
+        $this->path = $request->path();
+        $this->ip = HelperLibrary::getIp();
+        $this->bearerToken = $request->bearerToken();
+        $this->actionDate = new \DateTime;
+        $this->data = $request->all();
     }
 
     /**
@@ -35,9 +41,33 @@ class Authenticate
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
+        $header = array(
+            'Content-Type' => 'application/json',
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Headers' => '*',
+            'Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, OPTIONS'
+        );
+        //block all request except post or OPTIONS method
+        if (!$this->bearerToken) {
+            $this->responseData["messages"][] = HelperLibrary::getErrorUnauthorized();
+            $this->responseData["code"] = HelperLibrary::$responseCode["UNAUTHORIZED"];
+            return response()->json($this->responseData, $this->responseData["code"])->withHeaders($header);
         }
+        if ($request->isMethod('OPTIONS')) {
+            $this->responseData["messages"] = [];
+            $this->responseData["code"] = HelperLibrary::$responseCode["OK"];
+
+            return response()->json($this->responseData, $this->responseData["code"])->withHeaders($header);
+        }
+
+
+        app()->instance("ResponseData", $this->responseData);
+
+        app()->instance("RequestData", $this->data);
+
+        app()->instance("IP", $this->ip);
+        app()->instance("BearerToken", $this->bearerToken);
+        app()->instance("ActionDate", $this->actionDate);
 
         return $next($request);
     }

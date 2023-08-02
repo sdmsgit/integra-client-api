@@ -13,6 +13,15 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
-});
+$router->post('{any:.*}', [
+    'uses' => 'IndexController@index'
+]);
+$router->put('{any:.*}', [
+    'uses' => 'IndexController@index'
+]);
+$router->delete('{any:.*}', [
+    'uses' => 'IndexController@index'
+]);
+$router->get('{any:.*}', [
+    'uses' => 'IndexController@index'
+]);
