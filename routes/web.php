@@ -18,6 +18,17 @@ $router->group(['prefix' => '/token'], function () use ($router) {
     ]);
 });
 
+$router->group(['prefix' => '/input-setup'], function () use ($router) {
+    $router->get('/', [
+        'uses' => 'InputSetupController@index'
+    ]);
+});
+$router->group(['prefix' => '/entity'], function () use ($router) {
+    $router->get('/', [
+        'uses' => 'EntityController@index'
+    ]);
+});
+
 $router->post('{any:.*}', [
     'uses' => 'IndexController@index'
 ]);
