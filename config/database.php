@@ -3,6 +3,7 @@
 use Illuminate\Support\Str;
 //use Illuminate\Support\Facades\Redis;
 
+$databaseList = (array)json_decode(file_get_contents(__DIR__ . '/../database.json'));
 return [
 
     /*
@@ -37,11 +38,11 @@ return [
     'connections' => [
         'demo4jgi5_xhap6z69vc0xs962161zzbsfm45_mjc0b0iilg4ac384fi4ommk6tx7p78me' => [
             'driver' => 'pgsql',
-            'host' => 'pgm-d9jay82641z478b0eo.pgsql.ap-southeast-5.rds.aliyuncs.com',
-            'port' => '5432',
-            'database' => 'demo4jgi5_xhap6z69vc0xs962161zzbsfm45_mjc0b0iilg4ac384fi4ommk6tx7p78me',
-            'username' => 'admin_mcd',
-            'password' => 'KerjaMulu123',
+            'host' => $databaseList["demo4jgi5_xhap6z69vc0xs962161zzbsfm45_mjc0b0iilg4ac384fi4ommk6tx7p78me"]->host,
+            'port' => $databaseList["demo4jgi5_xhap6z69vc0xs962161zzbsfm45_mjc0b0iilg4ac384fi4ommk6tx7p78me"]->port,
+            'database' => $databaseList["demo4jgi5_xhap6z69vc0xs962161zzbsfm45_mjc0b0iilg4ac384fi4ommk6tx7p78me"]->database,
+            'username' => $databaseList["demo4jgi5_xhap6z69vc0xs962161zzbsfm45_mjc0b0iilg4ac384fi4ommk6tx7p78me"]->username,
+            'password' => $databaseList["demo4jgi5_xhap6z69vc0xs962161zzbsfm45_mjc0b0iilg4ac384fi4ommk6tx7p78me"]->password,
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
