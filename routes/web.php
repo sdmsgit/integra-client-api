@@ -29,6 +29,12 @@ $router->group(['prefix' => '/entity'], function () use ($router) {
     ]);
 });
 
+$router->group(['prefix' => '/uom'], function () use ($router) {
+    $router->get('/', [
+        'uses' => 'UomController@index'
+    ]);
+});
+
 $router->post('{any:.*}', [
     'uses' => 'IndexController@index'
 ]);
