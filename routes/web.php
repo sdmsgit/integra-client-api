@@ -35,6 +35,18 @@ $router->group(['prefix' => '/uom'], function () use ($router) {
     ]);
 });
 
+$router->group(['prefix' => '/indikator'], function () use ($router) {
+    $router->get('/', [
+        'uses' => 'IndikatorController@index'
+    ]);
+});
+
+$router->group(['prefix' => '/detail-indikator'], function () use ($router) {
+    $router->get('/', [
+        'uses' => 'DetailIndikatorController@index'
+    ]);
+});
+
 $router->post('{any:.*}', [
     'uses' => 'IndexController@index'
 ]);
