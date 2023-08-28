@@ -7,24 +7,36 @@ use Illuminate\Support\Facades\DB;
 class Indikator
 {
 
-    public function getIndikator($database, $id_data_set, $history_sdms,  $id = null, $code = null)
+    public function getIndikatorDetail($database, $indicatorId)
     {
+        $indikator = DB::connection($database)->table('history_m_indicators')->where('statusenabled', true)->where('id', $indicatorId)->first();
+        if (!$indikator) {
+            return false;
+        }
+        return $indikator;
+    }
 
-        $tahun = DB::connection($database)->table('input_setup as is')
-        ->join('history_master_sdms as hms', 'hms.input_setup_id', 'is.id')
-        ->select('hms.id', 'is.name', 'is.year', 'is.id_data_set')
-        ->where('is.statusenabled', true)
-        ->where('hms.id', $history_sdms)
-        ->where('is.id_data_set', $id_data_set)
-        ->first();
+    public function getIndikatorPeriode($indikatorId)
+    {
+    }
+
+    public function getIndikator($database, $inputSetupId, $history_sdms,  $id = null, $code = null)
+    {
+        $inputSetupLibrary = new InputSetup();
+
+        $inputSetupData = $inputSetupLibrary->getInputSetup($database, $inputSetupId, null);
+        if (count($inputSetupData) <= 0) {
+            return array();
+        }
+        $inputSetupData = $inputSetupData[0];
 
         $data = DB::connection($database)->table('history_m_indicators as hmi')
             ->join('history_m_disclousure as hmd', 'hmd.id', 'hmi.history_m_disclousure_id')
             ->join('m_periode as mp', 'mp.id', 'hmd.m_periode')
             ->select('hmi.id', 'hmi.code', 'hmi.name', 'mp.nama', 'mp.id as id_periode', 'hmi.status_data_setup')
             ->where('hmi.statusenabled', true)
-            ->where('hmi.id_data_set', $id_data_set)
-            ->where('hmi.history_master_sdms_id', $history_sdms);
+            ->where('hmi.id_data_set', $history_sdms)
+            ->where('hmi.history_master_sdms_id', $inputSetupId);
 
         if (isset($code) && $code != "" && $code != "undefined") {
             $data = $data->where('hmi.code', '=', $code);
@@ -34,33 +46,41 @@ class Indikator
         }
         $data = $data->get();
 
-        $terms = [];
-        foreach ($data as $dt) {
-
-            $periode = DB::connection($database)->table('m_periode_detail as mpd')->select('id_m_periode', 'duedate', 'periode_order')->where('statusenabled', true)->where('id_m_periode', $dt->id_periode)->orderBy('periode_order', 'asc')->get();
-
-            unset($periodarr);
-            $periodarr = [];
-
-            foreach ($periode as $per) {
-                $di_periode = $per->id_m_periode;
-                $periodarr[] = array(
-                    'id' =>  $di_periode,
-                    'duedate' => $tahun->year . '-' . $per->duedate,
-                    'periode_order' => $per->periode_order,
-                );
+        //dd($inputSetupId . " " . $history_sdms);
+        //return $data;
+        if (count($data) > 0) {
+            $listIdPeriode = array();
+            foreach ($data as $dt) {
+                array_push($listIdPeriode, $dt->id_periode);
             }
 
-            $terms[] = array(
+            $periode = DB::connection($database)->table('m_periode_detail as mpd')->select('id_m_periode', 'duedate', 'periode_order')->where('statusenabled', true)->whereIn('id_m_periode', $listIdPeriode)->orderBy('periode_order', 'asc')->get();
+
+            $arrayPeriode = array();
+            if (count($periode) > 0) {
+                foreach ($periode as $periodeData) {
+                    $periodeData->duedate = $inputSetupData->year . '-' . $periodeData->duedate;
+                    $arrayPeriode[$periodeData->id_m_periode] = $periodeData;
+                }
+            }
+        }
+
+        $results = array();
+        foreach ($data as $dt) {
+            $resultInd = array(
                 'id' => $dt->id,
                 'code' => $dt->code,
                 'name' => $dt->name,
                 'status_data_setup' => $dt->status_data_setup,
                 'periode' => trim($dt->nama),
-                'periode_detail' => $periodarr,
             );
+            if (isset($arrayPeriode[$dt->id_periode])) {
+                $resultInd['periode_detail'] = $arrayPeriode[$dt->id_periode];
+            }
+
+            $results[] = $resultInd;
         }
 
-        return $terms;
+        return $results;
     }
 }

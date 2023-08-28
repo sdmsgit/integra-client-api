@@ -19,7 +19,6 @@ class InputSetup
         if ($id) {
             $data = $data->where('is.id', '=', $id);
         }
-
         $data = $data->orderBy('is.year', 'desc')->distinct()->get();
 
 

@@ -39,7 +39,7 @@ class IndikatorController extends Controller
 
             $indikatorLibrary = new Indikator();
 
-            $result = $indikatorLibrary->getIndikator($this->databaseInstance,$this->requestData['data_set'], $this->requestData['input_setup'], $id, $code);
+            $result = $indikatorLibrary->getIndikator($this->databaseInstance, $this->requestData['input_setup'], $this->requestData['data_set'], $id, $code);
             $this->responseData["data"] = $result;
             $this->responseData["messages"] = array();
             $this->responseData["code"] = HelperLibrary::$responseCode["OK"];

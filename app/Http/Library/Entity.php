@@ -7,6 +7,15 @@ use Illuminate\Support\Facades\DB;
 class Entity
 {
 
+    public function getEntityDetail($database, $entityId)
+    {
+        $entity = DB::connection($database)->table('m_entitys')->where('statusenabled', true)->where('id', $entityId)->first();
+        if (!$entity) {
+            return false;
+        }
+        return $entity;
+    }
+
     public function getEntity($database, $id = null, $code = null)
     {
         $data = DB::connection($database)->table('m_entitys as me')

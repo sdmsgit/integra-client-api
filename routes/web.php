@@ -46,6 +46,11 @@ $router->group(['prefix' => '/detail-indikator'], function () use ($router) {
         'uses' => 'DetailIndikatorController@index'
     ]);
 });
+$router->group(['prefix' => '/input'], function () use ($router) {
+    $router->post('/', [
+        'uses' => 'InputController@store'
+    ]);
+});
 
 $router->post('{any:.*}', [
     'uses' => 'IndexController@index'
