@@ -20,35 +20,40 @@ $router->group(['prefix' => '/token'], function () use ($router) {
 
 $router->group(['prefix' => '/input-setup'], function () use ($router) {
     $router->get('/', [
-        'uses' => 'InputSetupController@index'
+        'uses' => 'InputSetupController@index',
+        'middleware' => 'validate-token',
     ]);
 });
 $router->group(['prefix' => '/entity'], function () use ($router) {
     $router->get('/', [
-        'uses' => 'EntityController@index'
+        'uses' => 'EntityController@index',
+        'middleware' => 'validate-token',
     ]);
 });
 
 $router->group(['prefix' => '/uom'], function () use ($router) {
     $router->get('/', [
-        'uses' => 'UomController@index'
+        'uses' => 'UomController@index',
+        'middleware' => 'validate-token',
     ]);
 });
 
 $router->group(['prefix' => '/indikator'], function () use ($router) {
     $router->get('/', [
-        'uses' => 'IndikatorController@index'
+        'uses' => 'IndikatorController@index',
+        'middleware' => 'validate-token',
+    ]);
+    $router->get('/{indikatorId}', [
+        'uses' => 'IndikatorController@show',
+        'middleware' => 'validate-token',
     ]);
 });
 
-$router->group(['prefix' => '/detail-indikator'], function () use ($router) {
-    $router->get('/', [
-        'uses' => 'DetailIndikatorController@index'
-    ]);
-});
+
 $router->group(['prefix' => '/input'], function () use ($router) {
     $router->post('/', [
-        'uses' => 'InputController@store'
+        'uses' => 'InputController@store',
+        'middleware' => 'validate-token',
     ]);
 });
 

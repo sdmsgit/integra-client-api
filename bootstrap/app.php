@@ -79,7 +79,9 @@ $app->configure('app');
 $app->middleware([
     App\Http\Middleware\Authenticate::class,
 ]);
-
+$app->routeMiddleware([
+    'validate-token' => App\Http\Middleware\TokenValidator::class,
+]);
 /*
 |--------------------------------------------------------------------------
 | Register Service Providers

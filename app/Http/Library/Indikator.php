@@ -16,9 +16,6 @@ class Indikator
         return $indikator;
     }
 
-    public function getIndikatorPeriode($indikatorId)
-    {
-    }
 
     public function getIndikator($database, $inputSetupId, $history_sdms,  $id = null, $code = null)
     {

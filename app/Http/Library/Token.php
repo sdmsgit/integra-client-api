@@ -37,6 +37,17 @@ class Token
         }
     }
 
+    public function validateToken($database, $token)
+    {
+        $datetimeNow = date("Y-m-d H:i:s");
+        $tokenData = DB::connection($database)->table('m_access_token')->select('token', 'expired_at')->where('token', $token)->where('expired_at', '>', $datetimeNow)->first();
+        if (!$tokenData) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     private function generateRandomString($length = 10)
     {
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ=';

@@ -6,6 +6,7 @@ use Exception;
 use App\Http\Library\Indikator;
 use Illuminate\Http\Request;
 use App\Http\Library\Helper as HelperLibrary;
+use App\Http\Library\DetailIndikator;
 
 class IndikatorController extends Controller
 {
@@ -17,6 +18,23 @@ class IndikatorController extends Controller
     public function __construct()
     {
         parent::__construct();
+    }
+
+    public function show($indikatorId)
+    {
+        try {
+            $detailIndikatorLibrary = new DetailIndikator();
+            $result = $detailIndikatorLibrary->getDetailIndikator($this->databaseInstance, $indikatorId);
+            $this->responseData["data"] = $result;
+            $this->responseData["messages"] = array();
+            $this->responseData["code"] = HelperLibrary::$responseCode["OK"];
+            return $this->sendResponse($this->responseData);
+        } catch (Exception $e) {
+            $this->responseData["messages"][] = HelperLibrary::gerErrorCustomMessage($e->getMessage());
+            $this->responseData["code"] = HelperLibrary::$responseCode["BAD_REQUEST"];
+
+            return $this->sendResponse($this->responseData);
+        }
     }
 
     public function index(Request $request)
